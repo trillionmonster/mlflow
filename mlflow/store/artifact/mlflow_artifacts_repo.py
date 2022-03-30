@@ -4,6 +4,7 @@ import re
 from mlflow.store.artifact.http_artifact_repo import HttpArtifactRepository
 from mlflow.tracking._tracking_service.utils import get_tracking_uri
 from mlflow.exceptions import MlflowException
+import os
 
 
 def _check_if_host_is_numeric(hostname):
@@ -56,7 +57,11 @@ class MlflowArtifactsRepository(HttpArtifactRepository):
 
         # Check to ensure that a port is present with no hostname
         _validate_port_mapped_to_hostname(uri_parse)
+        
+        # if uri is file, return the artifacts under "./mlartifacts", same fold with mlruns
+        if track_parse.scheme == "file":
 
+            return os.path.join(os.path.dirname(track_parse.path),"mlartifacts",uri_parse.path[1:])
         # Check that tracking uri is http or https
         _validate_uri_scheme(track_parse.scheme)
 
