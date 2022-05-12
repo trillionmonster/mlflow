@@ -65,6 +65,11 @@ class SFTPArtifactRepository(ArtifactRepository):
 
             if "identityfile" in user_config:
                 self.config["private_key"] = user_config["identityfile"][0]
+            
+            if self.get("password") is not None:
+                
+                self.config["cnopts"] = pysftp.CnOpts()
+                self.config["cnopts"].hostkeys = None
 
             self.sftp = pysftp.Connection(**self.config)
 
